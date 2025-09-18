@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Twenty Twenty
+Comment=20-20-20 Eye Break Timer
+Exec=%d/dist/twentytwenty
+Icon=%d/twentytwenty.png
+Type=Application
+Categories=Utility;Health;
+StartupNotify=true
+Terminal=false
+Keywords=eye;break;timer;health;strain;

@@ -29,7 +29,7 @@ This helps relax your eye muscles and reduce digital eye strain from prolonged s
 ### Install with uv (recommended)
 ```bash
 git clone <repository-url>
-cd 20-20-20
+cd twentytwenty
 uv sync
 uv run twentytwenty
 ```
@@ -37,30 +37,38 @@ uv run twentytwenty
 ### Install with pip
 ```bash
 git clone <repository-url>
-cd 20-20-20
+cd twentytwenty
 pip install -e .
 twentytwenty
 ```
 
-### Pre-built Packages
+### Pre-built Binary
 
-Download pre-built packages from the [Releases](https://github.com/YOUR_USERNAME/twentytwenty/releases) page:
+Build a standalone binary that can run without Python installed:
 
-**Linux:**
-- `.rpm` - For Fedora, RHEL, SUSE
-- `.deb` - For Ubuntu, Debian
+```bash
+# Build binary with desktop integration
+uv run python build.py
 
-**Windows:**
-- `.exe` - Standalone executable
-- `.msi` - Windows installer
+# Install as desktop application (Linux)
+uv run python build.py --install
+```
 
-**macOS:**
-- `.app` - Application bundle
-- `.dmg` - Disk image installer
+After installation, you can find "Twenty Twenty" in your applications menu.
+
+### From Source
+
+To run directly from source code:
+
+```bash
+cd twentytwenty
+uv sync
+uv run twentytwenty
+```
 
 ## Usage
 
-1. **Start the application** - Run `twentytwenty` or `uv run twentytwenty`
+1. **Start the application** - Run `uv run twentytwenty`
 2. **Start timer** - Left-click or right-click the eye icon in your system tray, select "Start Timer"
 3. **Take breaks** - When notified, look at something 20 feet away for 20 seconds
 4. **Restart timer** - After each break, manually start the next 20-minute timer
@@ -74,15 +82,21 @@ The tray icon shows:
 
 ## Development
 
-Built with:
-- **Python 3.11+**
-- **PyQt5** - GUI framework
-- **uv** - Modern Python package management
+### Technologies Used
+
+- **Python 3.11+** - Core language
+- **PyQt5** - Cross-platform GUI framework
+- **uv** - Modern Python package and dependency management
 
 ### Project Structure
 ```
 ├── twentytwenty.py    # Main application
+├── build.py           # Build script for creating binaries
 ├── pyproject.toml     # Project configuration
+├── uv.lock            # Dependency lock file
+├── .python-version    # Python version specification
+├── .gitignore         # Git ignore rules
+├── LICENSE            # MIT license
 └── README.md          # This file
 ```
 
@@ -94,7 +108,7 @@ For testing and development, you can run the application in debug mode:
 uv run twentytwenty --debug
 
 # Using direct Python execution
-python3 twentytwenty.py --debug
+uv run python twentytwenty.py --debug
 ```
 
 Debug mode enables:
@@ -102,42 +116,68 @@ Debug mode enables:
 - **Detailed logging output** showing all debug messages
 - **Enhanced development visibility** into timer operations
 
-## Building from Source
+## Building Binaries
 
-### Local Building
+The project includes a comprehensive build script that creates standalone binaries and desktop integration files.
 
-Use the build scripts to create packages locally:
+### Build Options
 
 ```bash
-# Build for current platform
-python build.py
+# Basic binary build
+uv run python build.py
 
-# Build for specific platform
-python build.py --platform linux    # RPM and DEB
-python build.py --platform windows  # EXE and MSI
-python build.py --platform macos    # APP and DMG
+# Build and install as desktop application (Linux)
+uv run python build.py --install
 
-# Build specific format
-python build.py --platform linux --format rpm
-python build.py --platform windows --format exe
+# Create directory distribution instead of single file
+uv run python build.py --dir
 
-# List available targets
-python build.py --list
+# Build with console window (useful for debugging)
+uv run python build.py --console
 ```
 
-### Requirements for Building
+### Build Outputs
 
-**Linux (RPM):** `rpm-build`, `python3-dev`
-**Linux (DEB):** `build-essential`, `debhelper`, `dh-python`
-**Windows:** `pyinstaller`, `cx_Freeze` (optional)
-**macOS:** `pyinstaller`, Xcode command line tools
+The build process creates:
 
-### GitHub Actions
+- **Binary**: `dist/twentytwenty` - Standalone executable (~49MB)
+- **Desktop file**: `twentytwenty.desktop` - Linux application menu entry
+- **Icon**: `twentytwenty.png` - Application icon
 
-Packages are automatically built for all platforms on:
-- Push to main/develop branches
-- Pull requests
-- Tagged releases (creates GitHub release with packages)
+### Desktop Integration (Linux)
+
+When using `--install`, the application is installed to:
+- Binary: `~/.local/bin/twentytwenty`
+- Desktop entry: `~/.local/share/applications/twentytwenty.desktop`
+- Icon: `~/.local/share/icons/twentytwenty.png`
+
+After installation, "Twenty Twenty" appears in your applications menu under Utilities/Health.
+
+## Development
+
+This project uses modern Python tooling:
+
+- **uv** for dependency management and virtual environments
+- **PyQt5** for the GUI framework
+- **PyInstaller** for binary creation
+- **Python 3.11+** as the minimum required version
+
+### Setting Up Development Environment
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd twentytwenty
+
+# Install dependencies
+uv sync
+
+# Run in development mode
+uv run twentytwenty --debug
+
+# Or run directly with Python
+uv run python twentytwenty.py --debug
+```
 
 ## License
 
