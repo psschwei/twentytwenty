@@ -36,7 +36,24 @@ def build_binary(onefile=True, console=False):
     if build_dir.exists():
         shutil.rmtree(build_dir)
 
-    # PyInstaller command
+    if sys.platform == "darwin":
+        # Use spec file on macOS so the BUNDLE block is picked up
+        cmd = ["uv", "run", "pyinstaller", "--clean", "twentytwenty.spec"]
+        print("Building macOS app bundle with PyInstaller...")
+        success = run_command(cmd)
+
+        if success:
+            app_path = dist_dir / "TwentyTwenty.app"
+            if app_path.exists():
+                print(f"✓ App bundle built successfully: {app_path}")
+                return app_path
+            else:
+                print("✗ App bundle not found after build")
+                return None
+        else:
+            return None
+
+    # PyInstaller command (non-macOS)
     cmd = [
         "uv", "run", "pyinstaller",
         "--name", "twentytwenty",
@@ -75,6 +92,31 @@ def build_binary(onefile=True, console=False):
             print("✗ Binary not found after build")
             return None
     else:
+        return None
+
+
+def create_dmg(app_path):
+    """Create a .dmg installer from the .app bundle"""
+    dist_dir = Path("dist")
+    dmg_path = dist_dir / "TwentyTwenty.dmg"
+
+    cmd = [
+        "hdiutil", "create",
+        "-volname", "TwentyTwenty",
+        "-srcfolder", str(app_path),
+        "-ov",
+        "-format", "UDZO",
+        str(dmg_path),
+    ]
+
+    print("Creating DMG...")
+    success = run_command(cmd)
+
+    if success and dmg_path.exists():
+        print(f"✓ DMG created: {dmg_path}")
+        return dmg_path
+    else:
+        print("✗ DMG creation failed")
         return None
 
 
@@ -216,6 +258,8 @@ def main():
                        help="Show console window (useful for debugging)")
     parser.add_argument("--install", action="store_true",
                        help="Install as desktop application (Linux only)")
+    parser.add_argument("--no-dmg", action="store_true",
+                       help="Skip DMG creation (macOS only)")
 
     args = parser.parse_args()
 
@@ -231,7 +275,16 @@ def main():
 
     if binary_path:
         print(f"\n✓ Build complete!")
-        print(f"Binary location: {binary_path}")
+        print(f"Output: {binary_path}")
+
+        # macOS: create DMG
+        if sys.platform == "darwin":
+            if not args.no_dmg:
+                dmg_path = create_dmg(binary_path)
+                if dmg_path:
+                    print(f"DMG location: {dmg_path}")
+            return
+
         print(f"File size: {binary_path.stat().st_size / 1024 / 1024:.1f} MB")
 
         # Test the binary

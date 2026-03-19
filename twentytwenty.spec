@@ -1,4 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
+import sys
 
 
 a = Analysis(
@@ -36,3 +37,18 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
+
+if sys.platform == 'darwin':
+    app = BUNDLE(
+        exe,
+        name='TwentyTwenty.app',
+        icon=None,
+        bundle_identifier='com.paulschweigert.twentytwenty',
+        info_plist={
+            'CFBundleName': 'TwentyTwenty',
+            'CFBundleDisplayName': 'Twenty Twenty',
+            'CFBundleShortVersionString': '0.1.0',
+            'NSHighResolutionCapable': True,
+            'LSUIElement': True,  # hides from Dock; lives in menu bar only
+        },
+    )
