@@ -47,14 +47,19 @@ twentytwenty
 Build a standalone binary that can run without Python installed:
 
 ```bash
-# Build binary with desktop integration
+# Linux: build binary with desktop integration
 uv run python build.py
 
-# Install as desktop application (Linux)
+# Linux: install as desktop application
 uv run python build.py --install
+
+# macOS: build .app bundle and .dmg installer
+uv run python build.py
 ```
 
-After installation, you can find "Twenty Twenty" in your applications menu.
+On macOS, the build produces `dist/TwentyTwenty.app` and `dist/TwentyTwenty.dmg`. The app runs as a menu bar app (hidden from the Dock).
+
+On Linux, after installation you can find "Twenty Twenty" in your applications menu.
 
 ### From Source
 
@@ -123,13 +128,16 @@ The project includes a comprehensive build script that creates standalone binari
 ### Build Options
 
 ```bash
-# Basic binary build
+# Basic build (auto-detects platform)
 uv run python build.py
 
-# Build and install as desktop application (Linux)
+# macOS: build without creating a DMG
+uv run python build.py --no-dmg
+
+# Linux: build and install as desktop application
 uv run python build.py --install
 
-# Create directory distribution instead of single file
+# Create directory distribution instead of single file (Linux/Windows)
 uv run python build.py --dir
 
 # Build with console window (useful for debugging)
@@ -138,11 +146,14 @@ uv run python build.py --console
 
 ### Build Outputs
 
-The build process creates:
+**macOS:**
+- `dist/TwentyTwenty.app` — app bundle (menu bar app, hidden from Dock)
+- `dist/TwentyTwenty.dmg` — disk image for distribution
 
-- **Binary**: `dist/twentytwenty` - Standalone executable (~49MB)
-- **Desktop file**: `twentytwenty.desktop` - Linux application menu entry
-- **Icon**: `twentytwenty.png` - Application icon
+**Linux:**
+- `dist/twentytwenty` — standalone executable (~49MB)
+- `twentytwenty.desktop` — application menu entry
+- `twentytwenty.png` — application icon
 
 ### Desktop Integration (Linux)
 
